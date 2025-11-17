@@ -1,0 +1,38 @@
+0 verbose cli /opt/homebrew/Cellar/node/24.6.0/bin/node /opt/homebrew/bin/npm
+1 info using npm@11.5.1
+2 info using node@v24.6.0
+3 silly config load:file:/opt/homebrew/lib/node_modules/npm/npmrc
+4 info config found workspace root at /Users/satyabratarout/agent/projects/aiStudio
+5 silly config load:file:/Users/satyabratarout/agent/projects/aiStudio/.npmrc
+6 silly config load:file:/Users/satyabratarout/.npmrc
+7 silly config load:file:/opt/homebrew/etc/npmrc
+8 verbose title npm run build
+9 verbose argv "run" "build"
+10 verbose logfile logs-max:10 dir:/Users/satyabratarout/agent/projects/aiStudio/.npm-cache/_logs/2025-11-17T16_14_28_041Z-
+11 verbose logfile /Users/satyabratarout/agent/projects/aiStudio/.npm-cache/_logs/2025-11-17T16_14_28_041Z-debug-0.log
+12 silly logfile start cleaning logs, removing 1 files
+13 silly logfile done cleaning log files
+14 verbose stack Error: command failed
+14 verbose stack     at promiseSpawn (/opt/homebrew/lib/node_modules/npm/node_modules/@npmcli/promise-spawn/lib/index.js:22:22)
+14 verbose stack     at spawnWithShell (/opt/homebrew/lib/node_modules/npm/node_modules/@npmcli/promise-spawn/lib/index.js:124:10)
+14 verbose stack     at promiseSpawn (/opt/homebrew/lib/node_modules/npm/node_modules/@npmcli/promise-spawn/lib/index.js:12:12)
+14 verbose stack     at runScriptPkg (/opt/homebrew/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/run-script-pkg.js:79:13)
+14 verbose stack     at runScript (/opt/homebrew/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/run-script.js:9:12)
+14 verbose stack     at #run (/opt/homebrew/lib/node_modules/npm/lib/commands/run.js:135:13)
+14 verbose stack     at RunScript.execWorkspaces (/opt/homebrew/lib/node_modules/npm/lib/commands/run.js:67:24)
+14 verbose stack     at async Npm.exec (/opt/homebrew/lib/node_modules/npm/lib/npm.js:208:9)
+14 verbose stack     at async module.exports (/opt/homebrew/lib/node_modules/npm/lib/cli/entry.js:67:5)
+15 verbose pkgid web@0.0.0
+16 error Lifecycle script `build` failed with error:
+17 error code 1
+18 error path /Users/satyabratarout/agent/projects/aiStudio/apps/web
+19 error workspace web@0.0.0
+20 error location /Users/satyabratarout/agent/projects/aiStudio/apps/web
+21 error command failed
+22 error command sh -c tsc -b && vite build
+23 verbose cwd /Users/satyabratarout/agent/projects/aiStudio/apps/web
+24 verbose os Darwin 24.6.0
+25 verbose node v24.6.0
+26 verbose npm  v11.5.1
+27 verbose exit 1
+28 verbose code 1
