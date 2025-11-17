@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import request from 'supertest';
 import app from '../app';
+import { generationRepository } from '../repositories/generationRepository';
 
 const sampleBuffer = Buffer.from(
   '89504e470d0a1a0a0000000d4948445200000001000000010802000000907724' +
@@ -21,9 +22,12 @@ const signupAndLogin = async () => {
     email: `user+${Date.now()}@example.com`,
     password: 'Password123!',
   };
-  await request(app).post('/auth/signup').send(credentials);
-  const res = await request(app).post('/auth/login').send(credentials);
-  return res.body.token as string;
+  const signupRes = await request(app).post('/auth/signup').send(credentials);
+  const loginRes = await request(app).post('/auth/login').send(credentials);
+  return {
+    token: loginRes.body.token as string,
+    userId: signupRes.body.user.id as string,
+  };
 };
 
 describe('Generation API', () => {
@@ -32,7 +36,7 @@ describe('Generation API', () => {
   });
 
   it('creates a generation successfully', async () => {
-    const token = await signupAndLogin();
+    const { token } = await signupAndLogin();
     const imagePath = createTestImage();
 
     jest.spyOn(Math, 'random').mockReturnValue(0.5);
@@ -66,7 +70,7 @@ describe('Generation API', () => {
   });
 
   it('simulates overload errors', async () => {
-    const token = await signupAndLogin();
+    const { token } = await signupAndLogin();
     const imagePath = createTestImage();
 
     jest.spyOn(Math, 'random').mockReturnValue(0.05);
@@ -82,5 +86,43 @@ describe('Generation API', () => {
     expect(res.body.message).toBe('Model overloaded');
 
     (Math.random as jest.MockedFunction<typeof Math.random>).mockRestore();
+  });
+
+  it('respects the limit parameter when listing generations', async () => {
+    const { token, userId } = await signupAndLogin();
+
+    const prompts = ['First look', 'Second look', 'Third look'];
+    prompts.forEach((prompt, index) => {
+      generationRepository.create({
+        user_id: userId,
+        prompt,
+        style: 'Minimalist',
+        image_url: `/uploads/seed-${index}.png`,
+        status: 'completed',
+      });
+    });
+
+    const res = await request(app)
+      .get('/generations?limit=2')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(200);
+
+    expect(res.body.items).toHaveLength(2);
+    const returnedPrompts = res.body.items.map((item: { prompt: string }) => item.prompt);
+    expect(returnedPrompts).not.toContain('Third look');
+    returnedPrompts.forEach((prompt: string) => {
+      expect(prompts).toContain(prompt);
+    });
+  });
+
+  it('rejects invalid list limits', async () => {
+    const { token } = await signupAndLogin();
+
+    const res = await request(app)
+      .get('/generations?limit=100')
+      .set('Authorization', `Bearer ${token}`)
+      .expect(400);
+
+    expect(res.body.message).toBe('Validation error');
   });
 });
